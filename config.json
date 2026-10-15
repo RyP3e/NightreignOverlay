@@ -3,8 +3,8 @@
   "window_title": "auto",
   "scan_interval": 0.7,
   "overlay": {
-    "x": 30,
-    "y": 30,
+    "x": 1546,
+    "y": 797,
     "opacity": 0.93,
     "scale": 1.0
   },

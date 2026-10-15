@@ -14,7 +14,7 @@ import ctypes
 import tkinter as tk
 
 from nr_logic import (Tracker, detect_message, parse_day, fmt, ROMAN,
-                      IDLE, EXPLORE, CIRCLE1, CIRCLE2, FINAL)
+                      IDLE, EXPLORE, CIRCLE1, CIRCLE2, BOSS, FINAL, FINISHED)
 
 IS_WIN = sys.platform == "win32"
 
@@ -32,7 +32,7 @@ DEFAULT_CONFIG = {
     "monitor": 1,                       # 1 = monitor principal
     "window_title": "auto",             # "auto" = janela do jogo, senao tela inteira; ou parte do titulo; "" = tela inteira
     "scan_interval": 0.7,               # segundos entre leituras
-    "overlay": {"x": 30, "y": 30, "opacity": 0.93, "scale": 1.0},
+    "overlay": {"x": -1, "y": -1, "opacity": 0.93, "scale": 1.0},
     "durations": {"explore": 270, "circle1_close": 180, "a_to_b": 360, "b_to_boss": 180},
     "regions": {                        # fracoes da tela: [esq, topo, dir, base]
         "banner": [0.22, 0.42, 0.78, 0.82],
@@ -167,6 +167,9 @@ class Scanner(threading.Thread):
         self.status = "Carregando leitor de texto..."
         self.debug_text = ""
         self.source = "tela"
+        self.boss_seen_frames = 0
+        self.boss_missing_frames = 0
+        self.boss_bar_active = False
 
     def run(self):
         try:
@@ -226,6 +229,30 @@ class Scanner(threading.Thread):
                 pass
         return out
 
+    def detect_boss_bar(self, shot):
+        """Detecta a barra vermelha de chefe por forma/cor na faixa inferior da tela.
+
+        Não depende do nome localizado do chefe: funciona com barras de chefes únicos
+        e múltiplos. O catálogo é referência de encontros; a barra é o sinal visual.
+        """
+        hsv = self.cv2.cvtColor(shot, self.cv2.COLOR_BGR2HSV)
+        h, w = hsv.shape[:2]
+        y0 = int(h * 0.72)
+        roi = hsv[y0:int(h * 0.985), :]
+        # Vermelho em HSV ocupa as duas extremidades do canal H.
+        low = self.cv2.inRange(roi, self.np.array([0, 95, 65]), self.np.array([12, 255, 255]))
+        high = self.cv2.inRange(roi, self.np.array([168, 95, 65]), self.np.array([180, 255, 255]))
+        mask = self.cv2.bitwise_or(low, high)
+        kernel = self.np.ones((3, 9), self.np.uint8)
+        mask = self.cv2.morphologyEx(mask, self.cv2.MORPH_CLOSE, kernel)
+        contours, _ = self.cv2.findContours(mask, self.cv2.RETR_EXTERNAL, self.cv2.CHAIN_APPROX_SIMPLE)
+        min_width = int(w * 0.12)
+        for c in contours:
+            x, y, cw, ch = self.cv2.boundingRect(c)
+            if cw >= min_width and 2 <= ch <= max(18, int(h * 0.025)) and cw / max(ch, 1) >= 8:
+                return True
+        return False
+
     def scan(self, sct):
         now = time.time()
         with self.lock:
@@ -235,6 +262,26 @@ class Scanner(threading.Thread):
         shot = self.np.array(sct.grab(area))[:, :, :3]  # BGRA -> BGR
         dbg = []
 
+        # Confirmação em vários frames evita falsos positivos por efeitos vermelhos.
+        bar_now = self.detect_boss_bar(shot)
+        if bar_now:
+            self.boss_seen_frames += 1
+            self.boss_missing_frames = 0
+        else:
+            self.boss_missing_frames += 1
+            self.boss_seen_frames = 0
+        with self.lock:
+            if self.boss_seen_frames >= 3 and not self.boss_bar_active:
+                self.boss_bar_active = True
+                if self.tracker.boss_bar_signal():
+                    log("Barra de chefe detectada; fase de combate iniciada")
+            # A barra só encerra o Dia III depois de desaparecer de forma estável.
+            # Uma pausa curta/segunda barra de uma luta múltipla não conclui a run.
+            if self.boss_bar_active and self.boss_missing_frames >= 15:
+                if self.tracker.boss_defeated():
+                    log("Barra final desapareceu; expedição concluída")
+                self.boss_bar_active = False
+
         if not day_wait:
             lines = self.ocr(self.crop(shot, self.cfg["regions"]["banner"]))
             n = parse_day(lines)
@@ -243,6 +290,8 @@ class Scanner(threading.Thread):
             if n:
                 with self.lock:
                     if self.tracker.day_signal(n):
+                        self.boss_bar_active = False
+                        self.boss_seen_frames = self.boss_missing_frames = 0
                         log("DIA %s detectado (texto: %s)" % (ROMAN[n], lines))
 
         if not msg_wait:
@@ -270,7 +319,7 @@ SILVER = "#cfd6e1"
 DIM = "#6a7686"
 RED = "#c05a55"
 FONT_SERIF = "Palatino Linotype"
-W, H = 330, 196
+W, H = 360, 224
 
 
 class App:
@@ -292,7 +341,13 @@ class App:
         self.root.attributes("-alpha", float(self.cfg["overlay"]["opacity"]))
         self.root.configure(bg=BG)
         w, h = int(W * self.sc), int(H * self.sc)
-        self.root.geometry("%dx%d+%d+%d" % (w, h, self.cfg["overlay"]["x"], self.cfg["overlay"]["y"]))
+        x, y = int(self.cfg["overlay"].get("x", -1)), int(self.cfg["overlay"].get("y", -1))
+        if x < 0 or y < 0:
+            x = max(0, self.root.winfo_screenwidth() - w - 24)
+            y = max(0, self.root.winfo_screenheight() - h - 48)
+            self.cfg["overlay"]["x"], self.cfg["overlay"]["y"] = x, y
+            save_config(self.cfg)
+        self.root.geometry("%dx%d+%d+%d" % (w, h, x, y))
         self.cv = tk.Canvas(self.root, width=w, height=h, bg=BG, highlightthickness=0)
         self.cv.pack()
         self.root.update_idletasks()
@@ -426,6 +481,10 @@ class App:
             cv.create_rectangle(x0, y, x0 + (x1 - x0) * frac, y + 4 * sc,
                                 fill=RED if overdue else ACCENT, outline="", tags="dyn")
 
+        # atalhos compactos sempre visíveis
+        self.text(W / 2, 188, "F5 Dia  •  F6 Mover  •  F7 Fase  •  F8 Ocultar", 7, DIM, font="Segoe UI")
+        self.text(W / 2, 199, "F9 Resetar  •  F10 Fechar  •  F11 Depuração", 7, DIM, font="Segoe UI")
+
         # rodape
         status = self.scanner.status
         if self.move_mode:
@@ -433,8 +492,8 @@ class App:
         elif self.debug:
             status = self.scanner.debug_text or "(sem texto lido)"
         dot = ACCENT if "Lendo" in self.scanner.status else RED
-        cv.create_oval(14 * sc, 184 * sc, 19 * sc, 189 * sc, fill=dot, outline="", tags="dyn")
-        self.text(24, 187, status[:58], 7, DIM, anchor="w", font="Segoe UI")
+        cv.create_oval(14 * sc, 211 * sc, 19 * sc, 216 * sc, fill=dot, outline="", tags="dyn")
+        self.text(24, 214, status[:58], 7, DIM, anchor="w", font="Segoe UI")
 
     def tick(self):
         try:

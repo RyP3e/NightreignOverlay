@@ -1,0 +1,749 @@
+{
+  "schema_version": "1.0.0",
+  "title": "Elden Ring Nightreign — Night Bosses (Day 1 and Day 2)",
+  "language": "pt-BR",
+  "purpose": "Structured reference for Claude or another coding assistant to help configure a Nightreign mod.",
+  "scope": {
+    "included": "Boss encounters at the end of Day 1 (Night 1) and Day 2 (Night 2). Day III final Nightlord bosses.",
+    "excluded": [
+      "Day 3 Nightlords",
+      "ordinary field bosses and minor enemies that are not end-of-day night encounters"
+    ],
+    "counts": {
+      "day_1_base_game_encounters": 14,
+      "day_1_dlc_encounters": 4,
+      "day_1_total_encounters": 18,
+      "day_2_base_game_encounters": 13,
+      "day_2_dlc_encounters": 4,
+      "day_2_total_encounters": 17,
+      "total_encounters": 35,
+      "day_3_nightlords": 10,
+      "total_catalog_entries": 45
+    }
+  },
+  "data_notes": [
+    "name_en is the canonical display label used by this reference; name_pt is a descriptive Portuguese translation and may not match the official in-game localization exactly.",
+    "id is a stable identifier for this JSON dataset, not a verified internal game asset ID or mod-loader identifier.",
+    "A grouped encounter can contain multiple names in members_en; configure it as one encounter unless the mod specifically needs entity-level entries.",
+    "Boss availability and weighting can vary by expedition. This dataset does not assert spawn probability or exact expedition eligibility.",
+    "Variant labels are descriptive. Confirm exact game-data/internal identifiers in the target mod files before wiring hooks or configuration values."
+  ],
+  "claude_instructions": [
+    "Read this file as a data reference for Day 1 and Day 2 end-of-day boss encounters.",
+    "Keep each id unchanged when using it as a key in generated config or code.",
+    "Use name_en and members_en for matching against game/mod data; use name_pt only for user-facing Portuguese labels.",
+    "Do not assume a boss display name or this dataset id is the internal ID used by the game.",
+    "Inspect the user's existing project, mod framework, and configuration format before implementing changes.",
+    "If internal IDs cannot be verified from project files or reliable sources, flag them as unresolved instead of inventing them.",
+    "Do not add Day 3 Nightlords or ordinary field bosses to this list unless explicitly requested."
+  ],
+  "sources": [
+    {
+      "title": "Nightreign:Bosses — Eldenpedia / Elden Ring Wiki.gg",
+      "url": "https://eldenring.wiki.gg/wiki/Nightreign:Bosses",
+      "used_for": "Reference list of Night 1 and Night 2 boss encounters, including DLC entries."
+    },
+    {
+      "title": "Elden Ring Nightreign bosses: Every Nightlord you’ll face in Limveld — PC Gamer",
+      "url": "https://www.pcgamer.com/games/rpg/elden-ring-nightreign-bosses-nightlords-list/",
+      "used_for": "Cross-check of base-game Night 1/Night 2 encounter labels and common variants."
+    },
+    {
+      "title": "Nightreign:Bosses — Eldenpedia / Elden Ring Wiki.gg",
+      "url": "https://eldenring.wiki.gg/wiki/Nightreign:Bosses",
+      "used_for": "Lista de Nightlords do Dia III."
+    }
+  ],
+  "boss_encounters": [
+    {
+      "id": "battlefield_commander",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "Battlefield Commander",
+      "name_pt": "Comandante do Campo de Batalha",
+      "members_en": [
+        "Battlefield Commander"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "Encounter title as listed by the community boss reference.",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "bell_bearing_hunter",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "Bell Bearing Hunter",
+      "name_pt": "Caçador do Portador do Sino",
+      "members_en": [
+        "Bell Bearing Hunter"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "centipede_demon",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "Centipede Demon",
+      "name_pt": "Demônio Centopeia",
+      "members_en": [
+        "Centipede Demon"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "Boss returning from the Dark Souls series.",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "dukes_dear_freja",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "The Duke's Dear Freja",
+      "name_pt": "Freja, Querida do Duque",
+      "members_en": [
+        "The Duke's Dear Freja"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "Boss returning from Dark Souls II.",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "demi_human_queen_swordmaster",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "Demi-Human Queen & Demi-Human Swordmaster",
+      "name_pt": "Rainha Semi-Humana e Mestre Espadachim Semi-Humano",
+      "members_en": [
+        "Demi-Human Queen",
+        "Demi-Human Swordmaster"
+      ],
+      "encounter_type": "multi_boss",
+      "variants_en": [],
+      "notes": "Treat as one night encounter with two named enemies.",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "gaping_dragon",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "Gaping Dragon",
+      "name_pt": "Dragão de Boca Escancarada",
+      "members_en": [
+        "Gaping Dragon"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "Boss returning from Dark Souls.",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "grafted_monarch",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "Grafted Monarch",
+      "name_pt": "Monarca Enxertado",
+      "members_en": [
+        "Grafted Monarch"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "nights_cavalry",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "Night's Cavalry",
+      "name_pt": "Cavalaria da Noite",
+      "members_en": [
+        "Night's Cavalry"
+      ],
+      "encounter_type": "boss_with_variants",
+      "variants_en": [
+        "Glaive",
+        "Flail"
+      ],
+      "notes": "The glaive and flail versions are variants; do not count them as separate encounter families unless the mod needs variant-level entries.",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "royal_revenant",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "Royal Revenant",
+      "name_pt": "Aparição Real",
+      "members_en": [
+        "Royal Revenant"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "smelter_demon",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "Smelter Demon",
+      "name_pt": "Demônio da Forja",
+      "members_en": [
+        "Smelter Demon"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "Boss returning from Dark Souls II.",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "tibia_mariner",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "Tibia Mariner",
+      "name_pt": "Barqueiro Tibiano",
+      "members_en": [
+        "Tibia Mariner"
+      ],
+      "encounter_type": "boss_with_adds",
+      "variants_en": [],
+      "notes": "Hostile undead may appear during the encounter; the listed boss name is Tibia Mariner.",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "ulcerated_tree_spirit",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "Ulcerated Tree Spirit",
+      "name_pt": "Espírito da Árvore Ulcerado",
+      "members_en": [
+        "Ulcerated Tree Spirit"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "valiant_gargoyle",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "Valiant Gargoyle",
+      "name_pt": "Gárgula Valente",
+      "members_en": [
+        "Valiant Gargoyle"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "wormface",
+      "day": 1,
+      "night": 1,
+      "content_pack": "base_game",
+      "name_en": "Wormface",
+      "name_pt": "Cara de Minhoca",
+      "members_en": [
+        "Wormface"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "death_knights",
+      "day": 1,
+      "night": 1,
+      "content_pack": "the_forsaken_hollows",
+      "name_en": "Death Knights",
+      "name_pt": "Cavaleiros da Morte",
+      "members_en": [
+        "Death Knight"
+      ],
+      "encounter_type": "multi_boss",
+      "variants_en": [],
+      "notes": "DLC night-boss entry; the encounter can involve multiple Death Knights.",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "demon_in_pain_demon_from_below",
+      "day": 1,
+      "night": 1,
+      "content_pack": "the_forsaken_hollows",
+      "name_en": "Demon in Pain & Demon from Below",
+      "name_pt": "Demônio em Dor e Demônio das Profundezas",
+      "members_en": [
+        "Demon in Pain",
+        "Demon from Below"
+      ],
+      "encounter_type": "multi_boss",
+      "variants_en": [],
+      "notes": "Boss encounter returning from Dark Souls III.",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "curseblade_divine_beast_warrior",
+      "day": 1,
+      "night": 1,
+      "content_pack": "the_forsaken_hollows",
+      "name_en": "Curseblade & Divine Beast Warrior",
+      "name_pt": "Lâmina Amaldiçoada e Guerreiro da Besta Divina",
+      "members_en": [
+        "Curseblade",
+        "Divine Beast Warrior"
+      ],
+      "encounter_type": "multi_boss",
+      "variants_en": [],
+      "notes": "Some lists reverse the order of the two names; this ID keeps one stable encounter.",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "great_red_bear",
+      "day": 1,
+      "night": 1,
+      "content_pack": "the_forsaken_hollows",
+      "name_en": "Great Red Bear",
+      "name_pt": "Grande Urso Vermelho",
+      "members_en": [
+        "Great Red Bear"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "DLC night-boss entry.",
+      "phase": "end_of_day_1"
+    },
+    {
+      "id": "ancient_dragon",
+      "day": 2,
+      "night": 2,
+      "content_pack": "base_game",
+      "name_en": "Ancient Dragon",
+      "name_pt": "Dragão Ancião",
+      "members_en": [
+        "Ancient Dragon"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "crucible_knight_golden_hippopotamus",
+      "day": 2,
+      "night": 2,
+      "content_pack": "base_game",
+      "name_en": "Crucible Knight & Golden Hippopotamus",
+      "name_pt": "Cavaleiro do Crisol e Hipopótamo Dourado",
+      "members_en": [
+        "Crucible Knight",
+        "Golden Hippopotamus"
+      ],
+      "encounter_type": "multi_boss",
+      "variants_en": [],
+      "notes": "One encounter featuring both named enemies.",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "dancer_of_the_boreal_valley",
+      "day": 2,
+      "night": 2,
+      "content_pack": "base_game",
+      "name_en": "Dancer of the Boreal Valley",
+      "name_pt": "Dançarina do Vale Boreal",
+      "members_en": [
+        "Dancer of the Boreal Valley"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "Boss returning from Dark Souls III.",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "death_rite_bird",
+      "day": 2,
+      "night": 2,
+      "content_pack": "base_game",
+      "name_en": "Death Rite Bird",
+      "name_pt": "Ave do Rito Fúnebre",
+      "members_en": [
+        "Death Rite Bird"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "draconic_tree_sentinel_royal_cavalrymen",
+      "day": 2,
+      "night": 2,
+      "content_pack": "base_game",
+      "name_en": "Draconic Tree Sentinel & Royal Cavalrymen",
+      "name_pt": "Sentinela Dracônico da Árvore e Cavaleiros da Cavalaria Real",
+      "members_en": [
+        "Draconic Tree Sentinel",
+        "Royal Cavalryman",
+        "Royal Cavalryman"
+      ],
+      "encounter_type": "multi_boss",
+      "variants_en": [],
+      "notes": "References commonly describe the encounter as the Draconic Tree Sentinel with two Royal Cavalrymen.",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "fell_omen",
+      "day": 2,
+      "night": 2,
+      "content_pack": "base_game",
+      "name_en": "Fell Omen",
+      "name_pt": "Presságio Caído",
+      "members_en": [
+        "Fell Omen"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "full_grown_fallingstar_beast",
+      "day": 2,
+      "night": 2,
+      "content_pack": "base_game",
+      "name_en": "Full-Grown Fallingstar Beast",
+      "name_pt": "Fera da Estrela Cadente Adulta",
+      "members_en": [
+        "Full-Grown Fallingstar Beast"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "godskin_noble_apostle",
+      "day": 2,
+      "night": 2,
+      "content_pack": "base_game",
+      "name_en": "Godskin Noble & Godskin Apostle",
+      "name_pt": "Nobre e Apóstolo da Pele Divina",
+      "members_en": [
+        "Godskin Noble",
+        "Godskin Apostle"
+      ],
+      "encounter_type": "multi_boss",
+      "variants_en": [],
+      "notes": "One encounter featuring both named enemies.",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "great_wyrm",
+      "day": 2,
+      "night": 2,
+      "content_pack": "base_game",
+      "name_en": "Great Wyrm",
+      "name_pt": "Grande Serpe",
+      "members_en": [
+        "Great Wyrm"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "Some guides refer to this encounter as Magma Wyrm; preserve Great Wyrm as the list label and verify the internal game identifier against the target game files.",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "nameless_king",
+      "day": 2,
+      "night": 2,
+      "content_pack": "base_game",
+      "name_en": "Nameless King",
+      "name_pt": "Rei Sem Nome",
+      "members_en": [
+        "Nameless King"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "Boss returning from Dark Souls III.",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "nox_dragonkin_soldier",
+      "day": 2,
+      "night": 2,
+      "content_pack": "base_game",
+      "name_en": "Nox Dragonkin Soldier",
+      "name_pt": "Soldado Draconiano de Nox",
+      "members_en": [
+        "Nox Dragonkin Soldier"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "outland_commander",
+      "day": 2,
+      "night": 2,
+      "content_pack": "base_game",
+      "name_en": "Outland Commander",
+      "name_pt": "Comandante das Terras Distantes",
+      "members_en": [
+        "Outland Commander"
+      ],
+      "encounter_type": "boss_with_variants",
+      "variants_en": [
+        "Lightning",
+        "Frostbite"
+      ],
+      "notes": "Variant labels appear in guide descriptions; validate the target mod/game data before mapping them to internal IDs.",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "tree_sentinel_royal_cavalrymen",
+      "day": 2,
+      "night": 2,
+      "content_pack": "base_game",
+      "name_en": "Tree Sentinel & Royal Cavalrymen",
+      "name_pt": "Sentinela da Árvore e Cavaleiros da Cavalaria Real",
+      "members_en": [
+        "Tree Sentinel",
+        "Royal Cavalryman",
+        "Royal Cavalryman"
+      ],
+      "encounter_type": "multi_boss",
+      "variants_en": [],
+      "notes": "References commonly describe the encounter as the Tree Sentinel with two Royal Cavalrymen.",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "knight_artorias",
+      "day": 2,
+      "night": 2,
+      "content_pack": "the_forsaken_hollows",
+      "name_en": "Knight Artorias",
+      "name_pt": "Cavaleiro Artorias",
+      "members_en": [
+        "Knight Artorias"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "Boss returning from Dark Souls.",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "demon_prince",
+      "day": 2,
+      "night": 2,
+      "content_pack": "the_forsaken_hollows",
+      "name_en": "Demon Prince",
+      "name_pt": "Príncipe Demônio",
+      "members_en": [
+        "Demon Prince"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "Boss returning from Dark Souls III.",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "divine_beast_dancing_lion",
+      "day": 2,
+      "night": 2,
+      "content_pack": "the_forsaken_hollows",
+      "name_en": "Divine Beast Dancing Lion",
+      "name_pt": "Leão Dançante da Besta Divina",
+      "members_en": [
+        "Divine Beast Dancing Lion"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "mohg_lord_of_blood",
+      "day": 2,
+      "night": 2,
+      "content_pack": "the_forsaken_hollows",
+      "name_en": "Mohg, Lord of Blood",
+      "name_pt": "Mohg, Senhor do Sangue",
+      "members_en": [
+        "Mohg, Lord of Blood"
+      ],
+      "encounter_type": "single_boss",
+      "variants_en": [],
+      "notes": "Some boss lists shorten this entry to Lord of Blood.",
+      "phase": "end_of_day_2"
+    },
+    {
+      "id": "day3_gladius",
+      "day": 3,
+      "night": 3,
+      "content_pack": "base_game_or_dlc",
+      "name_en": "Gladius, Beast of Night",
+      "name_pt": "Gladius, Fera da Noite",
+      "members_en": [
+        "Gladius, Beast of Night"
+      ],
+      "encounter_type": "nightlord",
+      "variants_en": [],
+      "notes": "Nightlord final do Dia III. O overlay usa a barra de vida como sinal visual; o nome é referência de catálogo.",
+      "phase": "final_day_3"
+    },
+    {
+      "id": "day3_adel",
+      "day": 3,
+      "night": 3,
+      "content_pack": "base_game_or_dlc",
+      "name_en": "Adel, Baron of Night",
+      "name_pt": "Adel, Barão da Noite",
+      "members_en": [
+        "Adel, Baron of Night"
+      ],
+      "encounter_type": "nightlord",
+      "variants_en": [],
+      "notes": "Nightlord final do Dia III. O overlay usa a barra de vida como sinal visual; o nome é referência de catálogo.",
+      "phase": "final_day_3"
+    },
+    {
+      "id": "day3_gnoster",
+      "day": 3,
+      "night": 3,
+      "content_pack": "base_game_or_dlc",
+      "name_en": "Gnoster, Wisdom of Night",
+      "name_pt": "Gnoster, Sabedoria da Noite",
+      "members_en": [
+        "Gnoster, Wisdom of Night"
+      ],
+      "encounter_type": "nightlord",
+      "variants_en": [],
+      "notes": "Nightlord final do Dia III. O overlay usa a barra de vida como sinal visual; o nome é referência de catálogo.",
+      "phase": "final_day_3"
+    },
+    {
+      "id": "day3_maris",
+      "day": 3,
+      "night": 3,
+      "content_pack": "base_game_or_dlc",
+      "name_en": "Maris, Fathom of Night",
+      "name_pt": "Maris, Abismo da Noite",
+      "members_en": [
+        "Maris, Fathom of Night"
+      ],
+      "encounter_type": "nightlord",
+      "variants_en": [],
+      "notes": "Nightlord final do Dia III. O overlay usa a barra de vida como sinal visual; o nome é referência de catálogo.",
+      "phase": "final_day_3"
+    },
+    {
+      "id": "day3_libra",
+      "day": 3,
+      "night": 3,
+      "content_pack": "base_game_or_dlc",
+      "name_en": "Libra, Creature of Night",
+      "name_pt": "Libra, Criatura da Noite",
+      "members_en": [
+        "Libra, Creature of Night"
+      ],
+      "encounter_type": "nightlord",
+      "variants_en": [],
+      "notes": "Nightlord final do Dia III. O overlay usa a barra de vida como sinal visual; o nome é referência de catálogo.",
+      "phase": "final_day_3"
+    },
+    {
+      "id": "day3_fulghor",
+      "day": 3,
+      "night": 3,
+      "content_pack": "base_game_or_dlc",
+      "name_en": "Fulghor, Champion of Nightglow",
+      "name_pt": "Fulghor, Campeão do Brilho Noturno",
+      "members_en": [
+        "Fulghor, Champion of Nightglow"
+      ],
+      "encounter_type": "nightlord",
+      "variants_en": [],
+      "notes": "Nightlord final do Dia III. O overlay usa a barra de vida como sinal visual; o nome é referência de catálogo.",
+      "phase": "final_day_3"
+    },
+    {
+      "id": "day3_caligo",
+      "day": 3,
+      "night": 3,
+      "content_pack": "base_game_or_dlc",
+      "name_en": "Caligo, Miasma of Night",
+      "name_pt": "Caligo, Miasma da Noite",
+      "members_en": [
+        "Caligo, Miasma of Night"
+      ],
+      "encounter_type": "nightlord",
+      "variants_en": [],
+      "notes": "Nightlord final do Dia III. O overlay usa a barra de vida como sinal visual; o nome é referência de catálogo.",
+      "phase": "final_day_3"
+    },
+    {
+      "id": "day3_heolstor",
+      "day": 3,
+      "night": 3,
+      "content_pack": "base_game_or_dlc",
+      "name_en": "Heolstor the Nightlord",
+      "name_pt": "Heolstor, Lorde da Noite",
+      "members_en": [
+        "Heolstor the Nightlord"
+      ],
+      "encounter_type": "nightlord",
+      "variants_en": [],
+      "notes": "Nightlord final do Dia III. O overlay usa a barra de vida como sinal visual; o nome é referência de catálogo.",
+      "phase": "final_day_3"
+    },
+    {
+      "id": "day3_harmonia",
+      "day": 3,
+      "night": 3,
+      "content_pack": "base_game_or_dlc",
+      "name_en": "Weapon-Bequeathed Harmonia (Balancers)",
+      "name_pt": "Harmonia, Legada pelas Armas (Balanceadores)",
+      "members_en": [
+        "Weapon-Bequeathed Harmonia (Balancers)"
+      ],
+      "encounter_type": "nightlord",
+      "variants_en": [],
+      "notes": "Nightlord final do Dia III. O overlay usa a barra de vida como sinal visual; o nome é referência de catálogo.",
+      "phase": "final_day_3"
+    },
+    {
+      "id": "day3_straghess",
+      "day": 3,
+      "night": 3,
+      "content_pack": "base_game_or_dlc",
+      "name_en": "Traitorous Straghess (Dreglord)",
+      "name_pt": "Straghess, o Traidor (Lorde da Ruína)",
+      "members_en": [
+        "Traitorous Straghess (Dreglord)"
+      ],
+      "encounter_type": "nightlord",
+      "variants_en": [],
+      "notes": "Nightlord final do Dia III. O overlay usa a barra de vida como sinal visual; o nome é referência de catálogo.",
+      "phase": "final_day_3"
+    }
+  ]
+}

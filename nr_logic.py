@@ -24,7 +24,7 @@ DEFAULT_DURATIONS = {
 }
 
 # Estados
-IDLE, EXPLORE, CIRCLE1, CIRCLE2, FINAL = "idle", "explore", "circle1", "circle2", "final"
+IDLE, EXPLORE, CIRCLE1, CIRCLE2, BOSS, FINAL, FINISHED = "idle", "explore", "circle1", "circle2", "boss", "final", "finished"
 
 ROMAN = {1: "I", 2: "II", 3: "III"}
 
@@ -150,6 +150,39 @@ class Tracker:
         self.last_day_t = -1e9
         self.last_msg_t = {"circle1": -1e9, "circle2": -1e9}
         self.last_event = ""
+        self.boss_started = False
+        self.finished_at = None
+        self.day_started_t = None
+
+    def boss_bar_signal(self, now=None):
+        """Inicia a fase de combate uma única vez quando a barra do chefe aparece."""
+        now = self.clock() if now is None else now
+        if self.day not in (1, 2, 3) or self.phase == FINISHED or self.boss_started:
+            return False
+        # Nos Dias I/II, evita tratar chefes opcionais como chefe noturno:
+        # aceita a barra após o sinal do 2º círculo ou após 12 min de dia.
+        if self.day in (1, 2) and self.phase != CIRCLE2:
+            if self.day_started_t is None or now - self.day_started_t < 720:
+                return False
+        self.boss_started = True
+        self.t0 = now
+        if self.day == 3:
+            self.phase = FINAL
+            self.last_event = "Chefe do Dia III detectado"
+        else:
+            self.phase = BOSS
+            self.last_event = "Chefe do Dia %s detectado" % ROMAN[self.day]
+        return True
+
+    def boss_defeated(self, now=None):
+        """Encerra a expedição apenas após a barra final do Dia III desaparecer."""
+        now = self.clock() if now is None else now
+        if self.day != 3 or self.phase != FINAL or not self.boss_started:
+            return False
+        self.phase = FINISHED
+        self.finished_at = now
+        self.last_event = "Nightlord derrotado — expedição concluída"
+        return True
 
     # -- sinais -------------------------------------------------------------
     def day_signal(self, n, now=None):
@@ -161,6 +194,9 @@ class Tracker:
             return False
         self.day = n
         self.phase = FINAL if n == 3 else EXPLORE
+        self.boss_started = False
+        self.finished_at = None
+        self.day_started_t = now
         self.t0 = now
         self.last_day_t = now
         self.last_event = "Dia %s detectado" % ROMAN[n]
@@ -204,7 +240,7 @@ class Tracker:
     # -- leitura para a UI ----------------------------------------------------
     def snapshot(self, now=None):
         now = self.clock() if now is None else now
-        el = max(0.0, now - self.t0)
+        el = max(0.0, (self.finished_at if self.phase == FINISHED and self.finished_at is not None else now) - self.t0)
         d = self.dur
         s = {"day": self.day, "phase": self.phase, "elapsed": el,
              "remaining": None, "total": None, "label": "", "next": "",
@@ -220,9 +256,16 @@ class Tracker:
                 else "Círculo fechado • aguardando o 2º"
         elif self.phase == CIRCLE2:
             s.update(label="2º círculo fechando", next="Chefe da Noite", total=d["b_to_boss"])
+        elif self.phase == BOSS:
+            s.update(label="Combate contra o chefe", next="Próximo dia", stopwatch=True,
+                     sub="Tempo de combate • Dia %s" % ROMAN.get(self.day, "—"))
         elif self.phase == FINAL:
             s.update(label="Chefe final", next="", stopwatch=True,
                      sub="Cronômetro do Dia III")
+        elif self.phase == FINISHED:
+            final_elapsed = max(0.0, (self.finished_at or now) - self.t0)
+            s.update(label="EXPEDIÇÃO CONCLUÍDA", next="", elapsed=final_elapsed,
+                     stopwatch=True, sub="Nightlord derrotado • tempo final registrado")
         if s["total"] is not None:
             s["remaining"] = s["total"] - el
             s["overdue"] = s["remaining"] < 0
