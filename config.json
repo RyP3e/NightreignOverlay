@@ -1,0 +1,44 @@
+{
+  "monitor": 1,
+  "window_title": "auto",
+  "scan_interval": 0.7,
+  "overlay": {
+    "x": 30,
+    "y": 30,
+    "opacity": 0.93,
+    "scale": 1.0
+  },
+  "durations": {
+    "explore": 270,
+    "circle1_close": 180,
+    "a_to_b": 360,
+    "b_to_boss": 180
+  },
+  "regions": {
+    "banner": [
+      0.22,
+      0.42,
+      0.78,
+      0.82
+    ],
+    "message": [
+      0.5,
+      0.08,
+      1.0,
+      0.32
+    ]
+  },
+  "extra_phrases": {
+    "circle1": [],
+    "circle2": []
+  },
+  "hotkeys": {
+    "next_day": "F5",
+    "move": "F6",
+    "next_phase": "F7",
+    "hide": "F8",
+    "reset": "F9",
+    "quit": "F10",
+    "debug": "F11"
+  }
+}

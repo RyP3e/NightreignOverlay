@@ -1,0 +1,6 @@
+rapidocr_onnxruntime
+opencv-python
+mss
+numpy
+pillow
+pyinstaller
