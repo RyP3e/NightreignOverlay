@@ -1,0 +1,56 @@
+NIGHTREIGN OVERLAY — timer das fases do dia (Elden Ring Nightreign)
+====================================================================
+
+INSTALAÇÃO (1 clique)
+  1. Dê duplo clique em  Instalar.bat  (precisa de internet só nessa hora).
+     - Ele acha/instala o Python 3.12, baixa as dependências e cria
+       NightreignOverlay.exe NESTA MESMA PASTA, já com o ícone.
+  2. Abra  NightreignOverlay.exe  (ou "Iniciar.bat").
+  O overlay nasce no canto inferior direito. Clique e arraste para mover —
+  a posição fica salva em config.json.
+
+ATALHOS (globais, funcionam com o jogo em foco)
+  F6  Pausar / retomar        F9   Voltar fase
+  F7  Resetar (volta ao Dia I) F10  Ocultar / mostrar (pausa a leitura da tela)
+  F8  Avançar fase            F11  Fechar
+  Botão direito no overlay também abre o menu. Teclas mudáveis em config.json ("hotkeys").
+
+COMO AS FASES MUDAM (só por sinal na tela)
+  Dia I/II/III ........ aparece "DAY I/II/III" (ou "DIA ...") no centro da tela
+  Zona livre -> 1º círculo ... mensagem "A maré da Noite se fortalece" (canto superior direito)
+  2º círculo ........... mensagem "A chuva se acumula, pressagiando a maré da Noite"
+  Chefe ................ barra de vida cujo NOME está em data/bosses.json (catálogo dos dias 1, 2 e 3)
+  Se o tempo zera e o sinal não apareceu, o timer conta NEGATIVO (vermelho) até o sinal chegar.
+  Exceção (marco por tempo): "1º círculo fechando" -> "fechado" troca sozinho aos 3:00, pois não existe
+  mensagem para isso. Desligue com "auto_milestone": false.
+  Tempos usados (dias 1 e 2): 4:30 zona livre · 3:00 círculo fechando · 3:30 espera · 3:00 2º círculo.
+  Dia 3 é só o chefe final (cronômetro progressivo). Ajuste em config.json ("durations").
+
+DESEMPENHO (o foco do projeto)
+  - Nunca captura a tela inteira: só 3 recortes pequenos, cada um só quando a fase precisa dele.
+  - Antes de qualquer OCR há um teste de cor/brilho (~1 ms, numpy). OCR só roda se houver texto/barra.
+  - Barra de chefe: o OCR lê só a faixa do nome logo acima da barra. Chefe de campo que não está
+    no catálogo faz o OCR espaçar as leituras sozinho.
+  - OCR = Windows OCR nativo (sem modelo, sem GPU, sem download). Prioridade de processo "abaixo do normal".
+  - O overlay é redesenhado só quando o texto muda (1x por segundo).
+
+REQUISITOS / DICAS
+  - Windows 10/11. Jogue em "Tela cheia sem bordas" (janela). Em tela cheia exclusiva a captura pode ficar preta.
+  - OCR em português: Configurações > Hora e idioma > Idioma > Português (Brasil) > Opções >
+    "Reconhecimento óptico de caracteres". Inglês (en-US) idem. Se faltar, o overlay mostra "OCR indisponível".
+  - O programa só LÊ a imagem da tela. Não injeta nada no jogo nem lê a memória dele.
+
+TESTE COM VÍDEO DO YOUTUBE
+  - Coloque o vídeo em TELA CHEIA no monitor principal (1080p ou mais) e inicie o overlay.
+    Sem o jogo aberto, ele captura o monitor inteiro ("monitor" em config.json).
+  - Se o vídeo estiver em janela, defina "capture_override": [x, y, largura, altura] com a área do vídeo.
+  - Nada aparece? Use Iniciar_Debug.bat: grava logs\overlay.log (texto que o OCR leu) e recortes em debug\.
+  - Para testar um print isolado: arraste-o sobre Testar_Print.bat.
+  - Se um chefe não for reconhecido, copie o nome que aparece no log para "extra_boss_names" em config.json.
+
+CONFIGURAÇÃO (config.json)
+  scale, opacity, ui_language ("pt"/"en"), regions (onde cada texto é lido, em fração da tela),
+  scan (intervalos), signals (palavras-chave dos avisos, PT e EN), durations, hotkeys, debug.
+
+ARQUIVOS
+  NightreignOverlay.exe (criado pelo instalador) · config.json · data\bosses.json · assets\ · src\ (código)

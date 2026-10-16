@@ -1,84 +1,88 @@
 @echo off
-setlocal
+setlocal EnableExtensions EnableDelayedExpansion
 chcp 65001 >nul
-title Nightreign Overlay - Instalador
+title Nightreign Overlay - Instalacao
 cd /d "%~dp0"
-echo ==============================================
-echo    NIGHTREIGN OVERLAY - Instalacao
-echo ==============================================
+echo ==============================================================
+echo   NIGHTREIGN OVERLAY - instalacao (cria o .exe nesta pasta)
+echo ==============================================================
 echo.
 
-rem O leitor de texto (onnxruntime) so tem pacote para Python 3.10 a 3.13.
+rem ---- 1) Python 3.10 a 3.13 -------------------------------------------------
 set "PY="
-call :try "py -3.12"
-call :try "py -3.11"
-call :try "py -3.13"
-call :try "py -3.10"
-call :try "python"
-
-if not defined PY (
-  echo Nao encontrei um Python compativel ^(3.10 a 3.13^).
-  echo Instalando o Python 3.12...
-  where py >nul 2>&1
-  if not errorlevel 1 py install 3.12
-  call :try "py -3.12"
+for %%V in (3.12 3.11 3.13 3.10) do (
+  if not defined PY (
+    py -%%V -c "import tkinter" >nul 2>&1 && set "PY=py -%%V"
+  )
 )
 if not defined PY (
+  python -c "import sys,tkinter; assert (3,10)<=sys.version_info[:2]<=(3,13)" >nul 2>&1 && set "PY=python"
+)
+if not defined PY (
+  echo [!] Python 3.12 nao encontrado. Tentando instalar com o winget...
   winget install -e --id Python.Python.3.12 --accept-package-agreements --accept-source-agreements
-  call :try "py -3.12"
-  call :try "python"
-)
-if not defined PY (
   echo.
-  echo Nao consegui deixar um Python compativel pronto automaticamente.
-  echo 1^) Instale o Python 3.12 em: https://www.python.org/downloads/release/python-3129/
-  echo    ^(marque "Add python.exe to PATH"^)
-  echo 2^) Feche esta janela e rode INSTALAR.bat de novo.
+  echo Python instalado? FECHE esta janela e execute Instalar.bat de novo.
+  echo Se o winget nao existir, baixe o Python 3.12 em python.org ^(marque "tcl/tk"^).
   pause
   exit /b 1
 )
+echo [1/4] Python encontrado: %PY%
 
-echo Usando: %PY%
-%PY% --version
-echo.
-echo [1/3] Instalando dependencias (pode demorar alguns minutos)...
-%PY% -m pip install --upgrade pip >nul 2>&1
-%PY% -m pip install -r "%~dp0requirements.txt"
-%PY% -c "import rapidocr_onnxruntime, mss, cv2, numpy, PyInstaller" >nul 2>&1
-if errorlevel 1 goto :erro
+rem ---- 2) ambiente local (tudo dentro desta pasta) --------------------------
+if not exist ".venv\Scripts\python.exe" (
+  %PY% -m venv .venv || goto :erro
+)
+echo [2/4] Instalando dependencias (precisa de internet)...
+".venv\Scripts\python.exe" -m pip install --upgrade pip >nul
+".venv\Scripts\python.exe" -m pip install -r requirements.txt pyinstaller || goto :erro
+
+rem ---- 3) gera o executavel NESTA pasta ---------------------------------------
+echo [3/4] Criando NightreignOverlay.exe ...
+if exist NightreignOverlay.exe del /q NightreignOverlay.exe
+".venv\Scripts\python.exe" -m PyInstaller --noconfirm --clean --onefile --noconsole ^
+  --name NightreignOverlay --icon "%CD%\assets\icon.ico" ^
+  --distpath . --workpath build --specpath build --paths src ^
+  --collect-all winrt.runtime --collect-all winrt.windows.foundation ^
+  --collect-all winrt.windows.foundation.collections --collect-all winrt.windows.globalization ^
+  --collect-all winrt.windows.graphics.imaging --collect-all winrt.windows.media.ocr ^
+  --collect-all winrt.windows.storage.streams ^
+  src\main.py >logs\build.log 2>&1
+if exist build rmdir /s /q build
+if exist NightreignOverlay.spec del /q NightreignOverlay.spec
+
+rem ---- 4) teste rapido do exe; se falhar, cria atalho alternativo --------------
+set "OK=0"
+if exist NightreignOverlay.exe (
+  start /wait "" "%CD%\NightreignOverlay.exe" --selftest
+  if not errorlevel 1 set "OK=1"
+)
+if "%OK%"=="1" (
+  set "TARGET=%CD%\NightreignOverlay.exe"
+  set "ARGS="
+  echo [4/4] Executavel OK.
+) else (
+  echo [!] O .exe nao passou no teste ^(veja logs\build.log e logs\selftest.txt^).
+  echo     Criando atalho alternativo que roda direto pelo Python local...
+  if exist NightreignOverlay.exe del /q NightreignOverlay.exe
+  set "TARGET=%CD%\.venv\Scripts\pythonw.exe"
+  set "ARGS=%CD%\src\main.py"
+)
+powershell -NoProfile -Command "$s=(New-Object -ComObject WScript.Shell).CreateShortcut('%CD%\Nightreign Overlay.lnk'); $s.TargetPath='!TARGET!'; $s.Arguments='!ARGS!'; $s.WorkingDirectory='%CD%'; $s.IconLocation='%CD%\assets\icon.ico'; $s.Save()"
 
 echo.
-echo [2/3] Gerando NightreignOverlay.exe nesta pasta...
-set "ICON="
-if exist "%~dp0icon.ico" set "ICON=--icon "%~dp0icon.ico""
-%PY% -m PyInstaller --noconfirm --clean --onefile --noconsole --name NightreignOverlay %ICON% --distpath "%~dp0." --workpath "%TEMP%\nr_build" --specpath "%TEMP%\nr_build" --paths "%~dp0." --collect-all rapidocr_onnxruntime "%~dp0NightreignOverlay.py"
-if not exist "%~dp0NightreignOverlay.exe" goto :erro
-rmdir /s /q "%TEMP%\nr_build" >nul 2>&1
-
+choice /m "Criar atalho na Area de Trabalho?"
+if not errorlevel 2 (
+  powershell -NoProfile -Command "$d=[Environment]::GetFolderPath('Desktop'); Copy-Item '%CD%\Nightreign Overlay.lnk' (Join-Path $d 'Nightreign Overlay.lnk') -Force"
+)
 echo.
-echo [3/3] Pronto!
-echo.
-echo   O arquivo NightreignOverlay.exe foi criado NESTA pasta.
-echo   De dois cliques nele para abrir o overlay.
-echo.
-set /p RUN="Abrir agora? (S/N): "
-if /i "%RUN%"=="S" start "" "%~dp0NightreignOverlay.exe"
+echo Pronto! Abra "NightreignOverlay.exe" (ou "Nightreign Overlay.lnk") nesta pasta.
+echo O overlay aparece no canto inferior direito. Arraste para mover. Atalhos: F6 F7 F8 F9 F10 F11.
+pause
 exit /b 0
 
 :erro
 echo.
-echo Ocorreu um erro na instalacao. Verifique sua internet e tente de novo.
-echo Se persistir, tire print desta janela e envie.
+echo [X] Falha na instalacao. Verifique sua internet e tente de novo.
 pause
 exit /b 1
-
-rem ---- testa se o comando e um Python 3.10 a 3.13 de verdade ----
-:try
-if defined PY goto :eof
-set "CAND=%~1"
-set "VER="
-for /f "delims=" %%i in ('%CAND% -c "import sys;print(sys.version_info[0]*100+sys.version_info[1])" 2^>nul') do set "VER=%%i"
-if not defined VER goto :eof
-echo %VER%| findstr /r "^31[0-3]$" >nul
-if not errorlevel 1 set "PY=%CAND%"
-goto :eof
